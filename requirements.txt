@@ -17,3 +17,4 @@ webencodings==0.5.1
 Werkzeug==2.0.1
 mysqlclient==2.1.0
 webargs==8.0.1
+flask-ldap3-login==0.9.17
