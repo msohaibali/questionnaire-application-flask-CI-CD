@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Welcome To this Site!
+</h1>
+
+{% if current_user.is_authenticated %}
+<h2 class="subtitle">
+  You are Logged In
+</h2>
+{% endif %}
+
+{% if not current_user.is_authenticated %}
+<h2 class="subtitle">
+  You are Not Logged In, Please Login to Enjoy Full Features
+</h2>
+{% endif %}
+
+
+{% endblock %}

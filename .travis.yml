@@ -1,0 +1,17 @@
+  # language: python
+  # python:
+  #   - "3.6"      # current default Python on Travis CI
+  #   - "3.7"
+  #   - "3.8"
+  #   - "3.9"
+
+  # # command to install dependencies
+  # install:
+  # - pip install -r requirements.txt
+  # - sudo apt-get install python3-sqlalchemy python3-mysqldb
+
+  # # command to run tests
+  # script:
+  # # unit test
+  # # - python extra_app.py
+  # - python -m pytest -v
