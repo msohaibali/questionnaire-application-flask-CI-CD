@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<h1 class="title">
+    <strong>&nbsp; Welcome To Your History </strong>
+</h1>
+{% endif %}
+
+{% if not current_user.is_authenticated %}
+<h1 class="title">
+    <strong> Please Login to View your History </strong>
+</h1>
+{% endif %}
+
+
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            margin-left: 2%;
+            margin-top: 2%;
+            margin-bottom: 2%;
+
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        td>a:link,
+        a:visited {
+            background-color: #000;
+            color: white;
+            padding: 14px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 25px;
+            width: 120px;
+            height: 50px;
+        }
+
+        td>a:hover,
+        a:active {
+            background-color: white;
+            color: black;
+            border: 3px solid black;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    {% if current_user.is_authenticated %}
+    <table style="width:40%" id="data">
+
+        {% if all_submissions %}
+        <button class="button-form" style="width: 198px;margin-left: 2%;">
+            <a href="{{ url_for('questionare.get_questionnaire_form') }}">Add New Response</a>
+        </button>
+
+        <tr>
+            {% for single_header in all_headers %}
+            {% if "Action" not in single_header %}
+            <th>{{single_header}}</th>
+            {% else %}
+            <th colspan="2" style="text-align: center;">{{single_header}}</th>
+            {% endif %}
+            {% endfor %}
+        </tr>
+
+        {% for single_submission in all_submissions %}
+        <tr>
+            <td>
+                {{loop.index}}
+            </td>
+
+            <td>
+                {{single_submission.created_at}}
+            </td>
+
+            <td>
+                {{single_submission.last_updated}}
+            </td>
+
+
+            <td>
+                <form action="{{ url_for('questionare.edit_questionnaire_form') }}" method=GET>
+                    <input type=hidden value="{{ single_submission.meta_form_id }}" name=meta_form_id />
+                    <input class="button-form" type=submit value="Update" />
+                </form>
+            </td>
+
+            <td>
+                <form action="{{ url_for('questionare.delete_post') }}" method=GET>
+                    <input type=hidden value="{{ single_submission.meta_form_id }}" name=meta_form_id />
+                    <input class="button-form" type=submit value="Delete" />
+                </form>
+            </td>
+
+
+
+        </tr>
+        {% endfor %}
+
+        {% else %}
+        <h2>
+            <div>
+                No Submissions Found
+            </div>
+            <button>
+                <a href="{{ url_for('questionare.get_questionnaire_form') }}">Create New Post</a>
+            </button>
+        </h2>
+
+        {% endif %}
+
+    </table>
+
+</body>
+{% endif %}
+
+{% endblock %}

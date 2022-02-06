@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<head>
+    <title>Metadata Gathering Form</title>
+    <link href="../static/css/main.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="testbox" style="margin-left:1%;margin-bottom:1%">
+        <form method="post" action="/post_data">
+            {% if all_categories %}
+            {% if all_systems %}
+
+            {% for single_category in all_categories %}
+            <label>
+                <h2>{{single_category.category}}</h2>
+                <br>
+
+                {% for single_question in single_category.questions %}
+                <div class="question" id="ques{{single_question.meta_question_id}}">
+                    <label>
+                        <strong>{{single_question.meta_question_id}}.
+                            {{single_question.meta_question}}
+                        </strong>
+                    </label>
+
+                    <div class="question-answer">
+                        <br>
+                        {% set flag="True" %}
+                        <fieldset>
+                            {% for single_choice in single_question.choices %}
+                            <div>
+
+                                {% if single_question.meta_question_id == 3 %}
+                                <select id="desc_{{single_question.meta_question_id}}"
+                                    name="desc_{{single_question.meta_question_id}}">
+                                    <option value="Select Year" required>
+                                        Select Year</option>
+                                    {% for single_year in years_list %}
+                                    <option value="{{single_year}}">{{single_year}}</option>
+                                    {% endfor %}
+
+                                </select>
+
+                                <input type="hidden" value="{{single_choice.meta_choices_id}}"
+                                    id="choice{{single_choice.meta_choices_id}}"
+                                    name="ques_{{single_question.meta_question_id}}" />
+
+
+                                {% else %}
+
+                                {% if flag=="True" %}
+                                <label class="checkbox_container">{{single_choice.meta_choice_desc}}
+                                    <input type="checkbox" value="{{single_choice.meta_choices_id}}"
+                                        id="choice{{single_choice.meta_choices_id}}"
+                                        name="ques_{{single_question.meta_question_id}}"
+                                        onchange="ShowHideDiv('desc_{{single_choice.meta_choices_id}}')" />
+                                    {% set flag="False" %}
+                                    <span class="checkmark"></span>
+                                </label>
+                                {% if "Please Specify" in single_choice.meta_choice_desc %}
+                                <input id="desc_{{single_choice.meta_choices_id}}"
+                                    name="desc_{{single_question.meta_question_id}}" type="text" style="display: none"
+                                    class="form-control" value='' />
+                                {% endif %}
+
+                                {% else %}
+                                <label class="checkbox_container">{{single_choice.meta_choice_desc}}
+                                    <input type="checkbox" value="{{single_choice.meta_choices_id}}"
+                                        id="choice{{single_choice.meta_choices_id}}"
+                                        name="ques_{{single_question.meta_question_id}}"
+                                        onchange="ShowHideDiv('desc_{{single_choice.meta_choices_id}}')" />
+                                    <span class="checkmark"></span>
+                                </label>
+                                {% if "Please Specify" in single_choice.meta_choice_desc %}
+                                <input id="desc_{{single_choice.meta_choices_id}}"
+                                    name="desc_{{single_question.meta_question_id}}" type="text" style="display: none"
+                                    class="form-control" value='' />
+                                {% endif %}
+                                {% endif %}
+
+
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </fieldset>
+
+                    </div>
+
+                    <br>
+                    <br>
+
+                </div>
+                {% endfor %}
+            </label>
+            {% endfor %}
+
+            {% endif %}
+            {% endif %}
+
+            <center>
+                <div>
+                    <button class="button-form" type="button" href="/home_page">Cancel</button>
+                    <button class="button-form" type="submit" href="/">Submit</button>
+                </div>
+            </center>
+
+        </form>
+    </div>
+</body>
+{% endblock %}

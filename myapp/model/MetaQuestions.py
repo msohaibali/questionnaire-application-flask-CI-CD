@@ -1,12 +1,19 @@
 from myapp.model.db_extension import db
-from sqlalchemy import Integer, String, Column, ForeignKey
+from myapp.model.MetaCategories import MetaCategories
+
 
 class MetaQuestions(db.Model):
-    __tablename__ = 'meta_questions'
+    __tablename__ = "meta_questions"
 
-    meta_question_id = Column(Integer, primary_key=True)
-    meta_question = Column(String(200), nullable=False)
-    meta_cat_id = Column(Integer, ForeignKey('meta_categories.meta_cat_id'), nullable=False)
-    
-    meta_cat = db.relationship('MetaCategories', backref='meta_ques', lazy=True)
-    meta_ans = db.relationship('MetaChoices', backref='meta_ques', lazy=True)
+    meta_question_id = db.Column(db.Integer, primary_key=True)
+    meta_question = db.Column(db.String(200), nullable=False)
+    checkbox = db.Column(db.Boolean, default=False)
+    meta_cat_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "meta_categories.meta_cat_id",
+        ),
+        nullable=False,
+    )
+
+    meta_cat = db.relationship("MetaCategories", backref="meta_ques")

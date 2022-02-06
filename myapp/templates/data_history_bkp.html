@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<h1 class="title">
+    <strong> Welcome To Your History </strong>
+</h1>
+{% endif %}
+
+{% if not current_user.is_authenticated %}
+<h1 class="title">
+    <strong> Please Login to View your History </strong>
+</h1>
+{% endif %}
+
+{% if current_user.is_authenticated %}
+<table id="data" class="table table-striped" , align="center">
+    {% if all_submissions %}
+    <button class="button-form">
+        <a href="{{ url_for('questionare.get_questionnaire_form') }}">Add New Response</a>
+    </button>
+    <thead>
+        <th>
+            <strong>Form</strong>
+        </th>
+
+        <th>
+            <strong>Submitted On</strong>
+        </th>
+
+        <th>
+            <strong>Last Updated</strong>
+        </th>
+
+    </thead>
+
+    <tbody>
+
+        {% for single_submission in all_submissions %}
+        <tr>
+            <td>
+                {{loop.index}}
+            </td>
+
+            <td>
+                {{single_submission.created_at}}
+            </td>
+
+            <td>
+                {{single_submission.last_updated}}
+            </td>
+
+
+            <td>
+                <form action="{{ url_for('posts.delete_post') }}" method=GET class="button-form">
+                    <input type=hidden value="{{ single_submission.meta_form_id }}" name=meta_form_id />
+                    <input type=submit value="Delete" />
+
+                </form>
+            </td>
+
+        </tr>
+        {% endfor %}
+
+    </tbody>
+
+    {% else %}
+    <h2>
+        <div>
+            No Posts Found
+        </div>
+        <button>
+            <a href="{{ url_for('questionare.get_questionnaire_form') }}">Create New Post</a>
+        </button>
+    </h2>
+
+    {% endif %}
+
+    {% endif %}
+</table>
+
+
+
+{% endblock %}

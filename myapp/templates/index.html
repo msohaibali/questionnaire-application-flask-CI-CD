@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">
-  Welcome To this Site!
-</h1>
+<center>
+    <h2 class="mb-3 aos-init aos-animate" data-aos="fade-up">Welcome To Metadata Gathering Application...</h2>
 
-{% if current_user.is_authenticated %}
-<h2 class="subtitle">
-  You are Logged In
-</h2>
-{% endif %}
+    {% if current_user.is_authenticated %}
+    <p class="me-4 aos-init aos-animate" data-aos="fade-up" data-aos-delay="300">Logged in Successfully...
+    </p>
+    {% endif %}
 
-{% if not current_user.is_authenticated %}
-<h2 class="subtitle">
-  You are Not Logged In, Please Login to Enjoy Full Features
-</h2>
-{% endif %}
+    {% if not current_user.is_authenticated %}
+    <p class="me-4 aos-init aos-animate" data-aos="fade-up" data-aos-delay="300">You are Not Logged In --- Please
+        <a rel="nofollow" href="{{ url_for('auth.login') }}" target="_blank"><strong>Login</strong></a>
+        to Submit and View your Data
+    </p>
+    {% endif %}
+</center>
 
 
 {% endblock %}

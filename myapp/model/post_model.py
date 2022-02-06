@@ -1,18 +1,24 @@
 from marshmallow import fields
-from flask_sqlalchemy import model
 from myapp.model.db_extension import db
 from myapp.model.ma_extension import ma
-from sqlalchemy import Integer, String, DateTime, Column, func, ForeignKey
+from sqlalchemy import func
+
 
 class Posts(db.Model):
-    __tablename__ = 'posts'
+    __tablename__ = "posts"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String(100), nullable=False)
-    description = Column(String(200))
-    created_at = Column(DateTime, default=func.current_timestamp())
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    user = db.relationship('User', backref='posts', lazy=True)
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=func.current_timestamp())
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    meta_user = db.relationship("User", lazy=True)
 
 
 class PostsSchema(ma.Schema):
