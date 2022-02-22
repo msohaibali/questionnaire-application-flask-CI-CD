@@ -10,6 +10,26 @@
 <body>
     <div class="testbox" style="margin-left:1%;margin-bottom:1%">
         <form method="post" action="/edit_data?form_id={{form_id}}">
+            <h2>
+                Select System
+            </h2>
+            <br>
+            <select id="system" name="system">
+                <option value="Select System" required>
+                    Select System</option>
+                {% for single_system in systems_list %}
+                {% if single_system.meta_system_id == target_system %}
+                <option value="{{single_system.meta_system_id}}" selected>{{single_system.system_name}}</option>
+                {% else %}
+                <option value="{{single_system.meta_system_id}}">{{single_system.system_name}}</option>
+                {% endif %}
+                {% endfor %}
+
+            </select>
+            <br>
+            <br>
+            <br>
+
             {% if all_categories %}
             {% if all_systems %}
 
@@ -51,42 +71,47 @@
 
                             {% else %}
                             {% if flag=="True" and single_choice.meta_choices_id in single_question.selection %}
-                            <input type="radio" value="{{single_choice.meta_choices_id}}"
-                                id="choice{{single_choice.meta_choices_id}}"
-                                name="ques_{{single_question.meta_question_id}}" required checked />
-                            <label for="choice{{single_choice.meta_choices_id}}" class="radio">
+                            <label class="checkbox_container">{{single_choice.meta_choice_desc}}
+                                <input type="checkbox" value="{{single_choice.meta_choices_id}}"
+                                    id="choice{{single_choice.meta_choices_id}}"
+                                    name="ques_{{single_question.meta_question_id}}"
+                                    onchange="ShowHideDiv('desc_{{single_choice.meta_choices_id}}')" required checked />
                                 {% set flag="False" %}
-                                <span>{{single_choice.meta_choice_desc}}</span>
+                                <span class="checkmark"></span>
                             </label>
 
                             {% elif flag=="False" and single_choice.meta_choices_id in single_question.selection %}
-                            <input type="radio" value="{{single_choice.meta_choices_id}}"
-                                id="choice{{single_choice.meta_choices_id}}"
-                                name="ques_{{single_question.meta_question_id}}" checked />
-                            <label for="choice{{single_choice.meta_choices_id}}" class="radio">
+                            <label class="checkbox_container">{{single_choice.meta_choice_desc}}
+                                <input type="checkbox" value="{{single_choice.meta_choices_id}}"
+                                    id="choice{{single_choice.meta_choices_id}}"
+                                    name="ques_{{single_question.meta_question_id}}"
+                                    onchange="ShowHideDiv('desc_{{single_choice.meta_choices_id}}')" checked />
                                 {% set flag="False" %}
-                                <span>{{single_choice.meta_choice_desc}}</span>
+                                <span class="checkmark"></span>
                             </label>
 
                             {% else %}
-                            <input type="radio" value="{{single_choice.meta_choices_id}}"
-                                id="choice{{single_choice.meta_choices_id}}"
-                                name="ques_{{single_question.meta_question_id}}" />
-                            <label for="choice{{single_choice.meta_choices_id}}" class="radio">
-                                <span>{{single_choice.meta_choice_desc}}</span>
+                            <label class="checkbox_container">{{single_choice.meta_choice_desc}}
+                                <input type="checkbox" value="{{single_choice.meta_choices_id}}"
+                                    id="choice{{single_choice.meta_choices_id}}"
+                                    name="ques_{{single_question.meta_question_id}}"
+                                    onchange="ShowHideDiv('desc_{{single_choice.meta_choices_id}}')" />
+                                {% set flag="False" %}
+                                <span class="checkmark"></span>
                             </label>
                             {% endif %}
 
                             {% if "Please Specify" in single_choice.meta_choice_desc %}
                             {% if single_choice.meta_choices_id in single_question.desc.keys() %}
                             <input id="desc_{{single_choice.meta_choices_id}}"
-                                name="desc_{{single_question.meta_question_id}}" type="text" class="form-control"
+                                name="desc_{{single_question.meta_question_id}}_{{single_choice.meta_choices_id}}"
+                                type="text" style="display: none" class="form-control"
                                 value='{{single_question.desc[single_choice.meta_choices_id]}}' />
 
                             {% else %}
                             <input id="desc_{{single_choice.meta_choices_id}}"
-                                name="desc_{{single_question.meta_question_id}}" type="text" class="form-control"
-                                value='' />
+                                name="desc_{{single_question.meta_question_id}}_{{single_choice.meta_choices_id}}"
+                                type="text" style="display: none" class="form-control" value='' />
                             {% endif %}
                             {% endif %}
                             {% endif %}

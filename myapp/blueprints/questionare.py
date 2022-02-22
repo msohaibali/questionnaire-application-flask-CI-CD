@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from webargs import fields
-from flask_login import login_required
+from flask_login import current_user, login_required
 from myapp.model.db_extension import db
 from webargs.flaskparser import use_args
 from flask import request, redirect, url_for
@@ -26,7 +26,11 @@ def get_form_data():
 @questionare.route("/get_form_list", methods=["GET"])
 @login_required
 def get_submissions_data():
-    data = QuestionareRepository.get_form_list()
+    if current_user.id != 4:
+        user_id = current_user.id
+    else:
+        user_id = None
+    data = QuestionareRepository.get_form_list(user_id=user_id)
     schema = QuestionareRepository.get_form_schema(many=True)
     result = schema.dump(data)
     return jsonify(result), HTTPStatus.OK
@@ -45,7 +49,6 @@ def get_data_by_user_form_id(meta_form_id):
 @questionare.route("/post_data", methods=["POST", "GET"])
 @login_required
 def post_form_data():
-    breakpoint()
     total_questions_len = QuestionareRepository.get_questions_count()
     submissions_count = QuestionnaireBLC.submissions_count(request.form)
 
@@ -53,7 +56,7 @@ def post_form_data():
         return redirect(request.referrer)
     incoming_args = request.form
     try:
-        ques_list, ans_list, desc_dict = QuestionnaireBLC.get_required_params(
+        qna_dict, desc_dict, meta_system = QuestionnaireBLC.get_required_param(
             incoming_args,
         )
     except Exception as _:
@@ -61,9 +64,9 @@ def post_form_data():
         print(_)
 
     response_data = {
-        "questions_list": ques_list,
-        "answers_list": ans_list,
+        "qna_dict": qna_dict,
         "description_list": desc_dict,
+        "meta_system": meta_system,
     }
     response_list = QuestionnaireBLC.data_serializer(data=response_data)
     _ = QuestionareRepository.add_responses(response_list)
@@ -82,6 +85,7 @@ def get_questionnaire_form():
         all_categories=result[0].json,
         all_systems=systems,
         years_list=years_list,
+        systems_list=systems,
     )
 
 
@@ -101,7 +105,6 @@ def get_history():
 @login_required
 def delete_post():
     form_id = request.args.get("meta_form_id")
-    breakpoint()
     target_form = QuestionareRepository.get_forms(form_id=form_id)
     if target_form:
         QuestionareRepository.delete_responses_by_id(form_id=form_id)
@@ -122,14 +125,18 @@ def edit_questionnaire_form():
     responses_list = get_data_by_user_form_id(form_id)
     response_data = QuestionnaireBLC.responses_obj_generator(responses_list)
     data = QuestionnaireBLC.merge_answers_in_questions(result, response_data)
+    target_form = QuestionareRepository.get_forms(form_id=form_id)
     systems = QuestionareRepository.get_systems()
     years_list = QuestionnaireBLC.get_years()
+    target_system_id = target_form.meta_system_id
     return render_template(
         "meta_data_edit_form.html",
         all_categories=data,
         form_id=form_id,
         all_systems=systems,
         years_list=years_list,
+        systems_list=systems,
+        target_system=target_system_id,
     )
 
 
@@ -141,7 +148,7 @@ def edit_form_data(args: dict):
     incoming_args = request.form
     breakpoint()
     try:
-        ques_list, ans_list, desc_dict = QuestionnaireBLC.get_required_params(
+        ques_list, ans_list, desc_dict = QuestionnaireBLC.get_required_param(
             incoming_args,
         )
     except Exception as _:

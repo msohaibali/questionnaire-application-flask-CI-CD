@@ -14,6 +14,30 @@ from myapp.schemas.ResponseSchema import ResponseSchema
 
 class QuestionareRepository:
     @staticmethod
+    def get_schema(only_fields: Optional[List] = None, many=True):
+        """
+        Return the schema which can be used to serialize the
+        Questionare Type objects.
+        """
+        return QuestionareSchema(only=only_fields, many=many)
+
+    @staticmethod
+    def get_form_schema(only_fields: Optional[List] = None, many=True):
+        """
+        Return the schema which can be used to serialize the
+        MetaForm Type objects.
+        """
+        return MetaFormSchema(only=only_fields, many=many)
+
+    @staticmethod
+    def get_response_schema(only_fields: Optional[List] = None, many=True):
+        """
+        Return the schema which can be used to serialize the
+        MetaResponse Type objects.
+        """
+        return ResponseSchema(only=only_fields, many=many)
+
+    @staticmethod
     def get_questions_data():
         response = db.session.query(MetaQuestions).outerjoin(
             (
@@ -125,27 +149,3 @@ class QuestionareRepository:
             print(ex)
             db.session.rollback()
             raise ValueError()
-
-    @staticmethod
-    def get_schema(only_fields: Optional[List] = None, many=True):
-        """
-        Return the schema which can be used to serialize the
-        Questionare Type objects.
-        """
-        return QuestionareSchema(only=only_fields, many=many)
-
-    @staticmethod
-    def get_form_schema(only_fields: Optional[List] = None, many=True):
-        """
-        Return the schema which can be used to serialize the
-        MetaForm Type objects.
-        """
-        return MetaFormSchema(only=only_fields, many=many)
-
-    @staticmethod
-    def get_response_schema(only_fields: Optional[List] = None, many=True):
-        """
-        Return the schema which can be used to serialize the
-        MetaResponse Type objects.
-        """
-        return ResponseSchema(only=only_fields, many=many)

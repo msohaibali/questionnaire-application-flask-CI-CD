@@ -11,6 +11,22 @@
 <body>
     <div class="testbox" style="margin-left:1%;margin-bottom:1%">
         <form method="post" action="/post_data">
+            <h2>
+                Select System
+            </h2>
+            <br>
+            <select id="system" name="system">
+                <option value="Select System" required>
+                    Select System</option>
+                {% for single_system in systems_list %}
+                <option value="{{single_system.meta_system_id}}">{{single_system.system_name}}</option>
+                {% endfor %}
+
+            </select>
+            <br>
+            <br>
+            <br>
+
             {% if all_categories %}
             {% if all_systems %}
 
@@ -35,8 +51,8 @@
                             <div>
 
                                 {% if single_question.meta_question_id == 3 %}
-                                <select id="desc_{{single_question.meta_question_id}}"
-                                    name="desc_{{single_question.meta_question_id}}">
+                                <select id="desc_{{single_question.meta_question_id}}_{{single_choice.meta_choices_id}}"
+                                    name="desc_{{single_question.meta_question_id}}_{{single_choice.meta_choices_id}}">
                                     <option value="Select Year" required>
                                         Select Year</option>
                                     {% for single_year in years_list %}
@@ -51,7 +67,6 @@
 
 
                                 {% else %}
-
                                 {% if flag=="True" %}
                                 <label class="checkbox_container">{{single_choice.meta_choice_desc}}
                                     <input type="checkbox" value="{{single_choice.meta_choices_id}}"
@@ -63,8 +78,8 @@
                                 </label>
                                 {% if "Please Specify" in single_choice.meta_choice_desc %}
                                 <input id="desc_{{single_choice.meta_choices_id}}"
-                                    name="desc_{{single_question.meta_question_id}}" type="text" style="display: none"
-                                    class="form-control" value='' />
+                                    name="desc_{{single_question.meta_question_id}}_{{single_choice.meta_choices_id}}"
+                                    type="text" style="display: none" class="form-control" value='' />
                                 {% endif %}
 
                                 {% else %}
@@ -77,8 +92,8 @@
                                 </label>
                                 {% if "Please Specify" in single_choice.meta_choice_desc %}
                                 <input id="desc_{{single_choice.meta_choices_id}}"
-                                    name="desc_{{single_question.meta_question_id}}" type="text" style="display: none"
-                                    class="form-control" value='' />
+                                    name="desc_{{single_question.meta_question_id}}_{{single_choice.meta_choices_id}}"
+                                    type="text" style="display: none" class="form-control" value='' />
                                 {% endif %}
                                 {% endif %}
 

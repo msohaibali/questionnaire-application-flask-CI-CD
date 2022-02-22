@@ -39,23 +39,26 @@ class QuestionnaireBLC:
         return len(set(chk_list))
 
     @staticmethod
-    def get_required_params(incoming_args):
-        ques_list = []
-        ans_list = []
+    def get_required_param(incoming_args):
+        qna_dict = {}
         desc_dict = {}
-        for single_item in incoming_args:
-            if "ques_" in single_item:
-                ques_list.append(int(single_item.replace("ques_", "")))
-                ans_list.append(int(incoming_args.get(single_item)))
-            if "desc_" in single_item:
-                desc_dict[int(single_item.split("_")[-1])] = incoming_args.get(
-                    single_item,
-                )
+        meta_system = ""
+        complete_list = [aa for aa in incoming_args.lists()]
+        for single_item in complete_list:
+            if "ques_" in single_item[0]:
+                ques_no = int(single_item[0].split("_")[-1])
+                qna_dict[ques_no] = [int(bb) for bb in single_item[1]]
+            elif "desc_" in single_item[0]:
+                ques_no = int(single_item[0].split("_")[1])
+                ans_no = int(single_item[0].split("_")[-1])
+                desc_dict[ques_no] = {ans_no: single_item[1]}
+            elif "system" in single_item[0]:
+                meta_system = int(single_item[1][0])
 
-        if not ques_list:
+        if not qna_dict:
             raise ValidationError("No Questions were Answered")
 
-        return ques_list, ans_list, desc_dict
+        return qna_dict, desc_dict, meta_system
 
     @staticmethod
     def data_serializer(
@@ -70,6 +73,7 @@ class QuestionnaireBLC:
                 meta_user=current_user,
                 created_at=datetime.now(),
                 last_updated=datetime.now(),
+                meta_system_id=data.get("meta_system"),
             )
         else:
             meta_form = (
@@ -82,18 +86,31 @@ class QuestionnaireBLC:
             meta_form.last_updated = datetime.now()
             session.flush()
 
-        for idx in range(len(data.get("questions_list"))):
-            responses_list.append(
-                MetaResponses(
-                    meta_response_description=desc_dict.get(idx + 1)
-                    if desc_dict.get(idx + 1)
-                    else None,
-                    meta_user=current_user,
-                    meta_question_id=data.get("questions_list")[idx],
-                    meta_answer_id=data.get("answers_list")[idx],
-                    meta_form=meta_form,
-                )
-            )
+        for ques, value in data.get("qna_dict").items():
+            for single_ans in value:
+                try:
+                    responses_list.append(
+                        MetaResponses(
+                            meta_response_description=desc_dict.get(ques).get(
+                                single_ans, None
+                            ),
+                            meta_user=current_user,
+                            meta_question_id=ques,
+                            meta_answer_id=single_ans,
+                            meta_form=meta_form,
+                        )
+                    )
+                except Exception as ex:
+                    print(ex)
+                    responses_list.append(
+                        MetaResponses(
+                            meta_response_description=None,
+                            meta_user=current_user,
+                            meta_question_id=ques,
+                            meta_answer_id=single_ans,
+                            meta_form=meta_form,
+                        )
+                    )
 
         return responses_list
 
